@@ -1,0 +1,2 @@
+-IC:/dev/3drenderer/src/SDL2
+-IC:/msys64/ucrt64/include
