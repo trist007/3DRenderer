@@ -54,6 +54,10 @@ initialize_window(void)
         fprintf(stderr, "Error creating SDL Renderer.\n");
         return(false);
     }
+
+    // ! NOTE: trist007: if i set createwindow to 800 x 600 then
+    // ! this would full screen monitor mode in 800 x 600
+    SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN);
     
     return(true);
 }
