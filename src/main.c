@@ -1,10 +1,20 @@
 #include <stdio.h>
+#include <stdint.h>
 #include <stdbool.h>
 #include <SDL.h>
 
+typedef uint32_t u32;
+
+bool is_running = false;
+
 SDL_Window *window;
 SDL_Renderer *renderer;
-bool is_running = false;
+
+u32 *color_buffer = NULL;
+SDL_Texture *color_buffer_texture = NULL;
+
+int window_width = 800;
+int window_height = 600;
 
 bool
 initialize_window(void)
@@ -20,8 +30,8 @@ initialize_window(void)
                               NULL,
                               SDL_WINDOWPOS_CENTERED,
                               SDL_WINDOWPOS_CENTERED,
-                              800,
-                              600,
+                              window_width,
+                              window_height,
                               SDL_WINDOW_BORDERLESS
                               );
     if (!window)
@@ -44,7 +54,17 @@ initialize_window(void)
 void
 setup(void)
 {
-    // TODO(trist007): 
+    // Allocating the required memory in bytes to hold the color buffer
+    color_buffer = (u32*)malloc(sizeof(u32) * window_width * window_height);
+
+    // creating SDL texture that is used to display color buffer
+    color_buffer_texture = SDL_CreateTexture(
+        renderer,
+        SDL_PIXELFORMAT_ARGB8888,
+        SDL_TEXTUREACCESS_STREAMING,
+        window_width,
+        window_height
+    );
 }
 
 void
@@ -73,17 +93,62 @@ update(void)
 }
 
 void
+clear_color_buffer(u32 color)
+{
+    // ! NOTE: trist007: clear every pixel to color
+    for (int y = 0; y < window_height; y++)
+    {
+        for (int x = 0; x < window_width; x++)
+        {
+            color_buffer[(window_width * y) + x] = color;
+        }
+    }
+}
+
+void
+render_color_buffer(void)
+{
+    SDL_UpdateTexture(
+        color_buffer_texture,
+        NULL,
+        color_buffer,
+        (int)(window_width * sizeof(u32))
+    );
+
+    SDL_RenderCopy(
+        renderer,
+        color_buffer_texture,
+        NULL,
+        NULL
+    );
+}
+
+void
 render(void)
 {
     SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255);
     SDL_RenderClear(renderer);
+
+    // ! NOTE: trist007: 0xAARRGGBB
+    render_color_buffer();
+    clear_color_buffer(0xFFFFFF00);
 
     // ...
 
     SDL_RenderPresent(renderer);
 }
 
-int main (int argc, char *argv[])
+void
+destroy_window(void)
+{
+    free(color_buffer);
+    SDL_DestroyRenderer(renderer);
+    SDL_DestroyWindow(window);
+    SDL_Quit();
+}
+
+int
+main (int argc, char *argv[])
 {
     is_running = initialize_window();
     
@@ -95,6 +160,8 @@ int main (int argc, char *argv[])
         update();
         render();
     }
+
+    destroy_window();
 
 	return(0);
 }
