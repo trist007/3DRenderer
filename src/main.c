@@ -24,7 +24,14 @@ initialize_window(void)
         fprintf(stderr, "Error initializing SDL.\n");
         return(false);
     }
-    
+
+    // Use SDL to query what is the fullscreen max width and height
+    SDL_DisplayMode display_mode = { 0 };
+    SDL_GetCurrentDisplayMode(0, &display_mode);
+
+    window_width  = display_mode.w;
+    window_height = display_mode.h;
+
     // Create a SDL Window
     window = SDL_CreateWindow(
                               NULL,
