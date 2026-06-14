@@ -135,6 +135,32 @@ render_color_buffer(void)
 }
 
 void
+draw_grid(u32 color)
+{
+  for (int y = 0; y < window_height; y += 10)
+  {
+    for (int x = 0; x < window_width; x += 10)
+    {
+        color_buffer[(window_width * y) + x] = color;
+    }
+  }
+}
+
+void
+draw_rectangle(int x, int y, int width, int height, u32 color)
+{
+    for (int i = 0; i < width; i++)
+    {
+        for (int j = 0; j < height; j++)
+        {
+            int current_x = x + i;
+            int current_y = y + j;
+            color_buffer[(window_width * current_y) + current_x] = color;
+        }
+    }
+}
+
+void
 render(void)
 {
     SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255);
@@ -142,7 +168,9 @@ render(void)
 
     // ! NOTE: trist007: 0xAARRGGBB
     render_color_buffer();
-    clear_color_buffer(0xFFFFFF00);
+    clear_color_buffer(0xFF000000);
+    draw_grid(0xFF333333);
+    draw_rectangle(600, 700, 200, 300, 0xFFCC00CC);
 
     // ...
 
@@ -157,6 +185,8 @@ destroy_window(void)
     SDL_DestroyWindow(window);
     SDL_Quit();
 }
+
+
 
 int
 main (int argc, char *argv[])
