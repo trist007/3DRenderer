@@ -1,6 +1,10 @@
 #include "display.h"
 #include "vector.h"
 
+// ! NOTE: trist007: coordinate system handedness
+// ! left handedness the Z goes positive farther away
+// ! right handedness the Z goes negative farther away
+
 ///////////////////////////////////////////////////////////////////////
 // Declare an array of vectors / points
 ///////////////////////////////////////////////////////////////////////
@@ -71,6 +75,10 @@ vec2_t
 project(vec3_t point)
 {
     vec2_t projected_point = {
+        // ! NOTE: trist007: this is known as perspective divide
+        // ! we divide by Z to give the illusion of depth
+        // ! without this we have an orthographic projection instead
+        // ! of a perspective projection
         .x = (fov_factor * point.x) / point.z,
         .y = (fov_factor * point.y) / point.z
     };
