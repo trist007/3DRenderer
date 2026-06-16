@@ -99,7 +99,17 @@ draw_grid(u32 color)
 }
 
 void
-draw_rectangle(int x, int y, int width, int height, u32 color)
+draw_pixel(int x, int y, u32 color)
+{
+    // ! NOTE: trist007: make sure x and y are valid coords
+    if ( x >= 0 && x < window_width && y >= 0 && y < window_height)
+    {
+        color_buffer[(window_width * y) + x] = color;
+    }
+}
+
+void
+draw_rect(int x, int y, int width, int height, u32 color)
 {
     for (int i = 0; i < width; i++)
     {
@@ -107,7 +117,7 @@ draw_rectangle(int x, int y, int width, int height, u32 color)
         {
             int current_x = x + i;
             int current_y = y + j;
-            color_buffer[(window_width * current_y) + current_x] = color;
+            draw_pixel(current_x, current_y, color);
         }
     }
 }

@@ -1,4 +1,12 @@
 #include "display.h"
+#include "vector.h"
+
+///////////////////////////////////////////////////////////////////////
+// Declare an array of vectors / points
+///////////////////////////////////////////////////////////////////////
+#define N_POINTS 729
+vec3_t cube_points[N_POINTS];  // 9x9x9 cube
+vec2_t projected_points[N_POINTS];
 
 bool is_running = false;
 
@@ -16,6 +24,21 @@ setup(void)
         window_width,
         window_height
     );
+
+    int point_count = 0;
+    // Starting loading my array of vectors
+    // from -1 to 1 (in this 9x9x9 cube)
+    for (float x = -1; x <= 1; x += 0.25)
+    {
+        for (float y = -1; y <= 1; y += 0.25)
+        {
+            for (float z = -1; z <= 1; z += 0.25)
+            {
+                vec3_t new_point = { .x = x, .y = y, .z = z };
+                cube_points[point_count++] = new_point;
+            }
+        }
+    }
 }
 
 void
@@ -37,25 +60,56 @@ process_input(void)
     }
 }
 
+///////////////////////////////////////////////////////////////////////
+// Function that receives a 3D vector and returns a projected 2D point
+///////////////////////////////////////////////////////////////////////
+vec2_t
+project(vec3_t point)
+{
+    vec2_t projected_point = {
+        .x = point.x,
+        .y = point.y,
+    };
+
+    return(projected_point);
+
+}
+
 void
 update(void)
 {
-    // TODO(trist007): 
+    for (int i = 0; i < N_POINTS; i++)
+    {
+        vec3_t point = cube_points[i];
+
+        // Project the current point
+        vec2_t projected_point = project(point);
+
+        // Save the projected 2D vector in the array of projected points
+        projected_points[i] = projected_point;
+    }
 }
 
 void
 render(void)
 {
-    SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255);
-    SDL_RenderClear(renderer);
+    draw_grid(0xFF333333);
 
-    // ! NOTE: trist007: 0xAARRGGBB
+    // Loop all projected points and render them
+    for (int i = 0; i < N_POINTS; i++)
+    {
+        vec2_t projected_point = projected_points[i];
+        draw_rect(
+            projected_point.x,
+            projected_point.y,
+            4,
+            4,
+            0xFFFFFF00
+        );
+    }
+
     render_color_buffer();
     clear_color_buffer(0xFF000000);
-    draw_grid(0xFF333333);
-    draw_rectangle(600, 700, 200, 300, 0xFFCC00CC);
-
-    // ...
 
     SDL_RenderPresent(renderer);
 }
@@ -66,7 +120,7 @@ main (int argc, char *argv[])
     is_running = initialize_window();
     
     setup();
-    
+
     while (is_running)
     {
         process_input();
