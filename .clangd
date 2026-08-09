@@ -1,0 +1,20 @@
+CompileFlags:
+  Compiler: gcc
+  Add:
+    - -I.
+    - -ISDL2
+    - -DHAVE_STDIO_H
+
+---
+
+If:
+  PathMatch: .*\.(c|h)$
+CompileFlags:
+  Add: -xc
+
+---
+
+If:
+  PathMatch: .*\.(cpp|cc|cxx|hpp|h)$
+CompileFlags:
+  Add: -xc++
