@@ -87,8 +87,11 @@ render_color_buffer(void)
 }
 
 void
-draw_grid(u32 color)
+draw_grid()
 {
+
+  u32 color = 0x000000FF;
+  
   for (int y = 0; y < window_height; y += 10)
   {
     for (int x = 0; x < window_width; x += 10)

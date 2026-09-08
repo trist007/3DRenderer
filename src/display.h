@@ -19,7 +19,7 @@ extern int window_width;
 extern int window_height;
 
 bool initialize_window(void);
-void draw_grid(u32 color);
+void draw_grid(void);
 void draw_pixel(int x, int y, u32 color);
 void draw_rect(int x, int y, int width, int height, u32 color);
 void clear_color_buffer(u32 color);
