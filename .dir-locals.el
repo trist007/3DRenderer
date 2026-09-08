@@ -9,8 +9,7 @@
                                  (define-key map (kbd "M-m")
                                    (lambda ()
                                      (interactive)
-                                     (compile (format "make -C %s"
-                                                      (project-root (project-current))))))
+                                     (compile "build.bat")))
                                  (define-key map (kbd "<f2>")
                                    (lambda ()
                                      (interactive)

@@ -1,13 +1,22 @@
-CC = C:/msys64/ucrt64/bin/gcc.exe
-CFLAGS = -IC:/sdl2/SDL2-2.30.11/include -IC:/msys64/ucrt64/include -Wall -std=c99 -Wno-unused-variable
+export MSYS2_ARG_CONV_EXCL=*
 
-LIBS = -LC:/sdl2/SDL2-2.30.11/lib/x64 -lSDL2main -lSDL2 -lm
+# Adjust to your MSVC-compatible SDL2 dev package
+SDL2_INC = C:/sdl2/SDL2-2.30.11/include
+SDL2_LIB = C:/sdl2/SDL2-2.30.11/lib/x64
+
+#CFLAGS  = /nologo /I$(SDL2_INC)  /Zi /std:c11
+# /wd4101 suppresses "unused local variable" (closest MSVC equivalent to -Wno-unused-variable)
+
+LDFLAGS = /link /LIBPATH:$(SDL2_LIB) /SUBSYSTEM:CONSOLE
 
 build:
-	$(CC) ./src/*.c $(CFLAGS) $(LIBS) -o renderer.exe
+	$(CC) $(CFLAGS) src/*.c /Fe:renderer.exe /Fd:renderer.pdb $(INCLUDES) $(LIBS) $(LDFLAGS)
 
 run:
 	./renderer.exe
 
+checkenv:
+	@echo INCLUDES=$$INCLUDES
+
 clean:
-	rm renderer.exe
+	rm -f renderer.exe renderer.pdb *.obj
