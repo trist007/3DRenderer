@@ -68,7 +68,7 @@ project(vec3_t point)
         // ! without this we have an orthographic projection instead
         // ! of a perspective projection
         .x = (fov_factor * point.x) / point.z,
-        .y = (fov_factor * point.y) / point.z
+        .y = (fov_factor * point.y) / point.z,
     };
 
     return(projected_point);
@@ -139,14 +139,16 @@ render(void)
     // Loop all projected triangles and render them
     for (int i = 0; i < N_MESH_FACES; i++)
     {
+        // Draw vertex points
         triangle_t triangle = triangles_to_render[i];
         draw_rect(triangle.points[0].x, triangle.points[0].y, 3, 3, 0xFFFFFF00);
         draw_rect(triangle.points[1].x, triangle.points[1].y, 3, 3, 0xFFFFFF00);
         draw_rect(triangle.points[2].x, triangle.points[2].y, 3, 3, 0xFFFFFF00);
 
-        draw_line(triangle.points[0].x, triangle.points[0].y, triangle.points[1].x, triangle.points[1].y);
-        draw_line(triangle.points[1].x, triangle.points[1].y, triangle.points[2].x, triangle.points[2].y);
-        draw_line(triangle.points[2].x, triangle.points[2].y, triangle.points[0].x, triangle.points[0].y);
+        // Draw triangle
+        draw_triangle(triangle.points[0].x, triangle.points[0].y,
+                      triangle.points[1].x, triangle.points[1].y,
+                      triangle.points[2].x, triangle.points[2].y);
     }
 
     render_color_buffer();
