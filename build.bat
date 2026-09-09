@@ -16,4 +16,5 @@ set INCLUDES=/I. /Isrc /I%SDLINCLUDE%
 set LIBS=kernel32.lib user32.lib gdi32.lib Shell32.lib SDL2.lib SDL2main.lib
 
 echo Compiling renderer.exe...
+    cd ../
     make
