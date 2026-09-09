@@ -125,7 +125,7 @@ draw_line(int x0, int y0, int x1, int y1)
 void
 draw_pixel(int x, int y)
 {
-  u32 color = 0xFFFFFF00;
+  u32 color = 0xFFFFFF00; // YELLOW
   // ! NOTE: trist007: make sure x and y are valid coords
   if ( x >= 0 && x < window_width && y >= 0 && y < window_height)
   {
