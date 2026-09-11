@@ -159,7 +159,6 @@ draw_rect(int x, int y, int width, int height, u32 color)
 void
 destroy_window(void)
 {
-  free(color_buffer);
   SDL_DestroyRenderer(renderer);
   SDL_DestroyWindow(window);
   SDL_Quit();

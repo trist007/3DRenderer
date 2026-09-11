@@ -5,8 +5,10 @@ echo cwd: %CD%
 set SDLINCLUDE=C:/sdl2/SDL2-2.30.11/include
 set SDLLIB=C:/sdl2/SDL2-2.30.11/lib/x64
 
-set CC=cl.exe
-set CFLAGS=/utf-8 /std:c17 /Zc:__STDC__ /EHsc ^
+REM /std:c17
+
+set CC=cl.exe /analyze
+set CFLAGS=/utf-8 /Zc:__STDC__ /EHsc ^
     /MD -nologo -fp:fast -Gm- -Od -Oi -WX -W4 ^
     -wd4202 -wd4100 -wd4189 -wd4244 -wd4996 -wd4456 -wd4324 -wd4505 -wd4267 -wd5287 ^
     -wd4701 -wd4244 -wd4101 -wd4305 ^
