@@ -59,6 +59,16 @@ vec2_dot(vec2_t a, vec2_t b)
   // A x B = AxBx + AyBy
   return (a.x * b.x) + (a.y * b.y);
 }
+
+void
+vec2_normalize(vec2_t* v)
+{
+  float length = (v->x * v->x) + (v->y * v->y);
+
+  v->x /= length;
+  v->y /= length;
+}
+
 /////////////////////////////////////////////////////////////////////////
 // Implementations of Vector 3D functions
 /////////////////////////////////////////////////////////////////////////
@@ -132,6 +142,16 @@ vec3_cross(vec3_t a, vec3_t b)
   };
   
   return result;
+}
+
+void
+vec3_normalize(vec3_t* v)
+{
+  float length = (v->x * v->x) + (v->y * v->y) + (v->z * v->z);
+
+  v->x /= length;
+  v->y /= length;
+  v->z /= length;
 }
 
 // NOTE(trist007): finds how aligned the two vectors are from 1.0 to -1.0

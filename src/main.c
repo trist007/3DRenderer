@@ -129,7 +129,6 @@ update(void)
       transformed_vertices[j] = transformed_vertex;
     }
 
-    // TODO(trist007): Backface Culling Implmentation
     vec3_t vector_a = transformed_vertices[0]; /*    A    */
     vec3_t vector_b = transformed_vertices[1]; /*   / \   */ // Clockwise to normal is away 
     vec3_t vector_c = transformed_vertices[2]; /*  C---B  */
@@ -138,11 +137,17 @@ update(void)
     vec3_t vector_ab = vec3_subtract(vector_b, vector_a);
     vec3_t vector_ac = vec3_subtract(vector_c, vector_a);
 
+    vec3_normalize(&vector_ab);
+    vec3_normalize(&vector_ac);
+
     // NOTE(trist007): We are using a LHS Left-Handed System where Z+ as
     // it goes away from camera so do ClockWise hence vec3_cross(vector_ab, vector_ac)
     // Get Dot Product to find Normal N
     // Order of parameters are VERY important use Clockwise for LHS and CCW for RHS
     vec3_t normal = vec3_cross(vector_ab, vector_ac);
+
+    // Normalize the face normal vector
+    vec3_normalize(&normal);
 
     // Find the vector between a point in the triangle and the camera origin
     vec3_t camera_ray = vec3_subtract(camera_position, vector_a);
