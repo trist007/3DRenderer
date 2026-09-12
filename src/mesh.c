@@ -35,6 +35,7 @@ load_file_mesh_data(const char *filepath)
   fclose(fp);
 
   parse_obj(buf);
+  free(buf);
 }
 
 void
