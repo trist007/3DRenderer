@@ -21,10 +21,9 @@ extern int window_height;
 
 bool initialize_window(void);
 void draw_grid(void);
-void draw_pixel(int x, int y);
+void draw_pixel(int x, int y, u32 color);
 void draw_rect(int x, int y, int width, int height, u32 color);
-void draw_line(int x0, int y0, int x1, int y1);
-void draw_triangle(int x0, int y0, int x1, int y1, int x2, int y2);
+void draw_line(int x0, int y0, int x1, int y1, u32 color);
 void clear_color_buffer(u32 color);
 void render_color_buffer(void);
 void destroy_window(void);
