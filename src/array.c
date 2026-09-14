@@ -8,16 +8,8 @@
 
 void* array_hold(void* array, int count, int item_size) {
     if (array == NULL) {
-        size_t raw_size = (sizeof(int) * 2) + ((size_t)item_size * (size_t)count);
-        /* #include <sal.h> */
-        /* _Analysis_assume_(raw_size >= sizeof(int) * 2); */
-
+        int raw_size = (sizeof(int) * 2) + (item_size * count);
         int* base = (int*)malloc(raw_size);
-        if (!base)
-        {
-          fprintf(stderr, "base pointer is NULL");
-          abort();
-        }
         base[0] = count;  // capacity
         base[1] = count;  // occupied
         return base + 2;
@@ -26,20 +18,12 @@ void* array_hold(void* array, int count, int item_size) {
         return array;
     } else {
         int needed_size = ARRAY_OCCUPIED(array) + count;
-        int double_curr = ARRAY_CAPACITY(array) * 2;
-        int capacity = needed_size > double_curr ? needed_size : double_curr;
+        int float_curr = ARRAY_CAPACITY(array) * 2;
+        int capacity = needed_size > float_curr ? needed_size : float_curr;
         int occupied = needed_size;
-        size_t raw_size = sizeof(int) * 2 + (size_t)item_size * (size_t)capacity;
+        int raw_size = sizeof(int) * 2 + item_size * capacity;
         int* base = (int*)realloc(ARRAY_RAW_DATA(array), raw_size);
-
-        if (!base)
-        {
-          fprintf(stderr, "base pointer is NULL");
-          abort();
-        }
-
         base[0] = capacity;
-#pragma warning(suppress: 6386)
         base[1] = occupied;
         return base + 2;
     }
