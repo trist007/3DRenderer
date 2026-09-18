@@ -23,13 +23,6 @@ int previous_frame_time = 0;
 vec3_t camera_position = { .x = 0, .y = 0, .z = 0 };
 mat4_t proj_matrix = { 0 };
 
-struct light_t light = {
-  .direction = {
-    .x = 5.0,
-    .y = 2.0,
-    .z = 3.0
-}};
-
 ///////////////////////////////////////////////////////////////////////////////
 // Setup function to initialize variables and game objects
 ///////////////////////////////////////////////////////////////////////////////
@@ -59,7 +52,7 @@ void setup(void) {
 
     // Loads the vertex and face values for the mesh data structure
     load_cube_mesh_data();
-    // load_obj_file_data("./assets/cube.obj");
+    // load_obj_file_data("./assets/f22.obj");
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -116,7 +109,7 @@ void update(void) {
     // Change the mesh scale/rotation values per animation frame
     mesh.rotation.x += 0.01;
     // mesh.rotation.y += 0.01;
-    // mesh.rotation.z += 0.01;
+    mesh.rotation.z += 0.01;
     mesh.translation.z = 5.0;
 
     // Create a scale, rotation, and translatioon matrix that will be used to multiply the mesh vertices
@@ -162,37 +155,29 @@ void update(void) {
         }
 
         // Backface culling test to see if the current face should be projected
-        if (cull_method == CULL_BACKFACE) {
-            vec3_t vector_a = vec3_from_vec4(transformed_vertices[0]); /*   A   */
-            vec3_t vector_b = vec3_from_vec4(transformed_vertices[1]); /*  / \  */
-            vec3_t vector_c = vec3_from_vec4(transformed_vertices[2]); /* C---B */
+        vec3_t vector_a = vec3_from_vec4(transformed_vertices[0]); /*   A   */
+        vec3_t vector_b = vec3_from_vec4(transformed_vertices[1]); /*  / \  */
+        vec3_t vector_c = vec3_from_vec4(transformed_vertices[2]); /* C---B */
 
-            // Get the vector subtraction of B-A and C-A
-            vec3_t vector_ab = vec3_sub(vector_b, vector_a);
-            vec3_t vector_ac = vec3_sub(vector_c, vector_a);
-            vec3_normalize(&vector_ab);
-            vec3_normalize(&vector_ac);
+        // Get the vector subtraction of B-A and C-A
+        vec3_t vector_ab = vec3_sub(vector_b, vector_a);
+        vec3_t vector_ac = vec3_sub(vector_c, vector_a);
+        vec3_normalize(&vector_ab);
+        vec3_normalize(&vector_ac);
 
-            // Compute the face normal (using cross product to find perpendicular)
-            vec3_t normal = vec3_cross(vector_ab, vector_ac);
-            vec3_normalize(&normal);
+        // Compute the face normal (using cross product to find perpendicular)
+        vec3_t normal = vec3_cross(vector_ab, vector_ac);
+        vec3_normalize(&normal);
 
-            // Find the vector between vertex A in the triangle and the camera origin
-            vec3_t camera_ray = vec3_sub(camera_position, vector_a);
+        // Find the vector between vertex A in the triangle and the camera origin
+        vec3_t camera_ray = vec3_sub(camera_position, vector_a);
 
-            // Calculate how aligned the camera ray is with the face normal (using dot product)
-            float dot_normal_camera = vec3_dot(normal, camera_ray);
+        // Calculate how aligned the camera ray is with the face normal (using dot product)
+        float dot_normal_camera = vec3_dot(normal, camera_ray);
 
-            // Bypass the triangles that are looking away from the camera
-            if (dot_normal_camera < 0) {
+        if (cull_method == CULL_BACKFACE)
+            if (dot_normal_camera < 0)
                 continue;
-            }
-
-            // Calculate Flat Shading depending on dot normal of face
-            float light_reflection = vec3_dot(light.direction, normal);
-            mesh_face.color = light_apply_intensity(mesh_face.color, light_reflection);
-
-        }
 
         vec4_t projected_points[3];
 
@@ -214,13 +199,19 @@ void update(void) {
         // Calculate the average depth for each face based on the vertices after transformation
         float avg_depth = (transformed_vertices[0].z + transformed_vertices[1].z + transformed_vertices[2].z) / 3.0;
 
+        // Calculate the shade intensity based on how aligned the light ray is with the face normal
+        float light_intensity_factor = vec3_dot(normal, light.direction);
+
+        // Calculate the triangle color based on the light angle;
+        uint32_t triangle_color = light_apply_intensity(mesh_face.color, light_intensity_factor);
+
         triangle_t projected_triangle = {
             .points = {
                 { projected_points[0].x, projected_points[0].y },
                 { projected_points[1].x, projected_points[1].y },
                 { projected_points[2].x, projected_points[2].y },
             },
-            .color = mesh_face.color,
+            .color = triangle_color,
             .avg_depth = avg_depth
         };
 
