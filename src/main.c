@@ -7,6 +7,7 @@
 #include "vector.h"
 #include "matrix.h"
 #include "mesh.h"
+#include "light.h"
 
 ///////////////////////////////////////////////////////////////////////////////
 // Array of triangles that should be rendered frame by frame
@@ -21,6 +22,13 @@ int previous_frame_time = 0;
 
 vec3_t camera_position = { .x = 0, .y = 0, .z = 0 };
 mat4_t proj_matrix = { 0 };
+
+struct light_t light = {
+  .direction = {
+    .x = 5.0,
+    .y = 2.0,
+    .z = 3.0
+}};
 
 ///////////////////////////////////////////////////////////////////////////////
 // Setup function to initialize variables and game objects
@@ -179,6 +187,11 @@ void update(void) {
             if (dot_normal_camera < 0) {
                 continue;
             }
+
+            // Calculate Flat Shading depending on dot normal of face
+            float light_reflection = vec3_dot(light.direction, normal);
+            mesh_face.color = light_apply_intensity(mesh_face.color, light_reflection);
+
         }
 
         vec4_t projected_points[3];
