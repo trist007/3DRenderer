@@ -28,7 +28,7 @@ mat4_t proj_matrix = { 0 };
 ///////////////////////////////////////////////////////////////////////////////
 void setup(void) {
     // Initialize render mode and triangle culling method
-    render_method = RENDER_WIRE;
+    render_method = RENDER_FILL_TRIANGLE;
     cull_method = CULL_BACKFACE;
 
     // Allocate the required memory in bytes to hold the color buffer
@@ -51,8 +51,8 @@ void setup(void) {
     proj_matrix = mat4_make_perspective(fov, aspect, znear, zfar);
 
     // Loads the vertex and face values for the mesh data structure
-    load_cube_mesh_data();
-    // load_obj_file_data("./assets/f22.obj");
+    // load_cube_mesh_data();
+    load_obj_file_data("./assets/f22.obj");
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -107,9 +107,8 @@ void update(void) {
     triangles_to_render = NULL;
 
     // Change the mesh scale/rotation values per animation frame
-    mesh.rotation.x += 0.01;
+    mesh.rotation.x += 0.010;
     // mesh.rotation.y += 0.01;
-    mesh.rotation.z += 0.01;
     mesh.translation.z = 5.0;
 
     // Create a scale, rotation, and translatioon matrix that will be used to multiply the mesh vertices
@@ -190,6 +189,9 @@ void update(void) {
             projected_points[j].x *= (window_width / 2.0);
             projected_points[j].y *= (window_height / 2.0);
 
+            // Invert the y values to account for flipped screen y coordinate
+            projected_points[j].y *= -1;
+
             // Translate(+) the projected points to the middle of the screen
             projected_points[j].x += (window_width / 2.0);
             projected_points[j].y += (window_height / 2.0);
@@ -199,8 +201,8 @@ void update(void) {
         // Calculate the average depth for each face based on the vertices after transformation
         float avg_depth = (transformed_vertices[0].z + transformed_vertices[1].z + transformed_vertices[2].z) / 3.0;
 
-        // Calculate the shade intensity based on how aligned the light ray is with the face normal
-        float light_intensity_factor = vec3_dot(normal, light.direction);
+        // Calculate the shade intensity based on how aligned the face normal and inverse of light ray
+        float light_intensity_factor = -vec3_dot(normal, light.direction);
 
         // Calculate the triangle color based on the light angle;
         uint32_t triangle_color = light_apply_intensity(mesh_face.color, light_intensity_factor);
